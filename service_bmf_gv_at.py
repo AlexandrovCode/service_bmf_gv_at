@@ -422,7 +422,7 @@ class Handler(Extract, GetPages):
     def get_overview(self, link_name):
         self.overview = {}
         # self.get_working_tree_api(link_name, 'tree')
-        # print(link_name)
+        print(link_name)
         try:
             # self.overview['vcard:organization-name'] = re.findall("'[\s\w]+'", link_name)[0].replace("'", '').strip()
             temp = link_name.split('{')[0]
@@ -455,6 +455,13 @@ class Handler(Extract, GetPages):
             self.overview['hasIPODate'] = self.reformat_date(date, '%d.%m.%Y')
         except:
             pass
+
+        try:
+            temp = link_name.split('}')[3]
+            date = re.findall("display: '\d\d.\d\d.\d{4}", temp)[0].split("'")[1]
+            self.overview['hasLatestOrganizationFoundedDate'] = self.reformat_date(date, '%d.%m.%Y')
+        except:
+            pass
         try:
             address = link_name.split('}')[0]
             address = re.findall("display: .+", address)[0]
@@ -477,8 +484,8 @@ class Handler(Extract, GetPages):
             pass
 
 
-        print(self.overview)
-        exit()
+        # print(self.overview)
+        # exit()
 
         # self.fillField('logo', xpath='')
 
