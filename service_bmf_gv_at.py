@@ -46,7 +46,7 @@ class Handler(Extract, GetPages):
         url = 'https://service.bmf.gv.at/service/allg/lsu/mast_info_data.asp'
         self.get_working_tree_api(url, 'api')
         for company in self.api:
-            if searchquery in company:
+            if searchquery.lower() in company.lower():
                 result.append(company)
         return result
 
@@ -422,7 +422,7 @@ class Handler(Extract, GetPages):
     def get_overview(self, link_name):
         self.overview = {}
         # self.get_working_tree_api(link_name, 'tree')
-        print(link_name)
+        # print(link_name)
         try:
             # self.overview['vcard:organization-name'] = re.findall("'[\s\w]+'", link_name)[0].replace("'", '').strip()
             temp = link_name.split('{')[0]
@@ -436,6 +436,7 @@ class Handler(Extract, GetPages):
         self.overview['regulator_url'] = self.base_url
         self.overview['RegulationStatus'] = 'Authorised'
         try:
+            #print(link_name)
             self.overview['bst:registrationId'] = re.findall("{display: '\d{5}\d*\w*", link_name)[0].split("'")[-1].split('"')[0]
             if self.overview['bst:registrationId']:
                 self.overview['identifiers'] = {'other_company_id_number': self.overview['bst:registrationId']}
@@ -443,10 +444,11 @@ class Handler(Extract, GetPages):
             pass
         try:
             vat = re.findall("ATU\d+", link_name)[0]
-            if vat and self.overview['identifiers']:
+            try:
                 self.overview['identifiers']['vat_tax_number'] = vat
-            else:
+            except:
                 self.overview['identifiers'] = {'vat_tax_number': vat}
+            #print(self.overview['identifiers'])
         except:
             pass
         try:
